@@ -1,0 +1,48 @@
+import { NextRequest, NextResponse } from "next/server";
+import { saveRegistration } from "@/lib/db";
+import { sendRegistrationEmail } from "@/lib/email";
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+
+    const { restaurantName, ownerName, phone, email, menu } = body;
+
+    // Validate inputs
+    if (!restaurantName || !ownerName || !phone || !email || !menu) {
+      return NextResponse.json(
+        { error: "Todos los campos son obligatorios" },
+        { status: 400 }
+      );
+    }
+
+    // Save to database
+    saveRegistration({
+      restaurantName,
+      ownerName,
+      phone,
+      email,
+      menu,
+    });
+
+    // Send email notification
+    await sendRegistrationEmail({
+      restaurantName,
+      ownerName,
+      phone,
+      email,
+      menu,
+    });
+
+    return NextResponse.json(
+      { success: true, message: "Registro completado con éxito" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("API error:", error);
+    return NextResponse.json(
+      { error: "Ocurrió un error en el servidor. Por favor intenta más tarde." },
+      { status: 500 }
+    );
+  }
+}
