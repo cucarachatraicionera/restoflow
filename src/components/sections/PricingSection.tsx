@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function PricingSection() {
   return (
-    <section id="precios" className="py-24 bg-white relative">
+    <section id="precios" className="py-24 bg-white relative overflow-hidden">
       <div className="absolute top-0 right-0 -m-32 w-[600px] h-[600px] bg-blue-50/50 rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
       
       <div className="container mx-auto px-4 max-w-5xl relative z-10">
