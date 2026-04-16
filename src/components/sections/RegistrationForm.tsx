@@ -14,7 +14,8 @@ export function RegistrationForm() {
     setStatus("idle");
     setErrorMessage("");
 
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     const restaurantName = formData.get("restaurantName") as string;
     const ownerName = formData.get("ownerName") as string;
     const phone = formData.get("phone") as string;
@@ -33,11 +34,16 @@ export function RegistrationForm() {
       });
 
       if (!response.ok) {
-        throw new Error("Ocurrió un error al guardar el formulario.");
+        let errText = "Ocurrió un error al guardar el formulario.";
+        try {
+          const errBody = await response.json();
+          if (errBody.error) errText = errBody.error;
+        } catch(e) {}
+        throw new Error(errText);
       }
 
       setStatus("success");
-      e.currentTarget.reset();
+      form.reset();
 
       // Redirigir a WhatsApp
       const text = `🚀 *Nuevo Registro en RestoFlow* 🚀\n\n*Restaurante:* ${restaurantName}\n*Dueño:* ${ownerName}\n*Teléfono:* ${phone}\n*Email:* ${email}\n\n*Menú:*\n${menu}`;

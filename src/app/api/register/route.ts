@@ -28,10 +28,10 @@ export async function POST(req: NextRequest) {
       { success: true, message: "Registro completado con éxito" },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("API error:", error);
     return NextResponse.json(
-      { error: "Ocurrió un error en el servidor al guardar el registro." },
+      { error: "Error en el servidor: " + error?.message + "\nStack: " + error?.stack },
       { status: 500 }
     );
   }
