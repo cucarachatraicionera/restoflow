@@ -15,13 +15,13 @@ export function RegistrationForm() {
     setErrorMessage("");
 
     const formData = new FormData(e.currentTarget);
-    const data = {
-      restaurantName: formData.get("restaurantName"),
-      ownerName: formData.get("ownerName"),
-      phone: formData.get("phone"),
-      email: formData.get("email"),
-      menu: formData.get("menu"),
-    };
+    const restaurantName = formData.get("restaurantName") as string;
+    const ownerName = formData.get("ownerName") as string;
+    const phone = formData.get("phone") as string;
+    const email = formData.get("email") as string;
+    const menu = formData.get("menu") as string;
+
+    const data = { restaurantName, ownerName, phone, email, menu };
 
     try {
       const response = await fetch("/api/register", {
@@ -33,11 +33,17 @@ export function RegistrationForm() {
       });
 
       if (!response.ok) {
-        throw new Error("Ocurrió un error al enviar el formulario.");
+        throw new Error("Ocurrió un error al guardar el formulario.");
       }
 
       setStatus("success");
       e.currentTarget.reset();
+
+      // Redirigir a WhatsApp
+      const text = `🚀 *Nuevo Registro en RestoFlow* 🚀\n\n*Restaurante:* ${restaurantName}\n*Dueño:* ${ownerName}\n*Teléfono:* ${phone}\n*Email:* ${email}\n\n*Menú:*\n${menu}`;
+      const whatsappUrl = `https://wa.me/3002667843?text=${encodeURIComponent(text)}`;
+      window.open(whatsappUrl, '_blank');
+      
     } catch (error) {
       setStatus("error");
       setErrorMessage(error instanceof Error ? error.message : "Error desconocido");
@@ -55,7 +61,7 @@ export function RegistrationForm() {
               Empieza a automatizar hoy
             </h2>
             <p className="text-muted-foreground">
-              Déjanos tus datos y el menú principal de tu restaurante. Nuestro equipo configurará la IA y se pondrá en contacto contigo para la activación.
+              Déjanos tus datos y el menú principal de tu restaurante. Te enviaremos a nuestro WhatsApp para terminar la configuración y activación.
             </p>
           </div>
 
@@ -64,15 +70,15 @@ export function RegistrationForm() {
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
                 <CheckCircle2 className="w-8 h-8 text-green-600" />
               </div>
-              <h3 className="text-xl font-bold text-green-800 mb-2">¡Solicitud Enviada!</h3>
+              <h3 className="text-xl font-bold text-green-800 mb-2">¡Redirigiendo a WhatsApp!</h3>
               <p className="text-green-700">
-                Hemos recibido tu información. Estaremos en contacto muy pronto al correo y teléfono proporcionados.
+                Tus datos se guardaron correctamente. Completa tu solicitud enviando el mensaje en WhatsApp.
               </p>
               <button 
                 onClick={() => setStatus("idle")} 
                 className="mt-6 text-sm text-green-600 font-semibold hover:underline"
               >
-                Enviar otra solicitud
+                Volver al formulario
               </button>
             </div>
           ) : (

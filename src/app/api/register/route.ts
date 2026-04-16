@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { saveRegistration } from "@/lib/db";
-import { sendRegistrationEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,15 +24,6 @@ export async function POST(req: NextRequest) {
       menu,
     });
 
-    // Send email notification
-    await sendRegistrationEmail({
-      restaurantName,
-      ownerName,
-      phone,
-      email,
-      menu,
-    });
-
     return NextResponse.json(
       { success: true, message: "Registro completado con éxito" },
       { status: 200 }
@@ -41,7 +31,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("API error:", error);
     return NextResponse.json(
-      { error: "Ocurrió un error en el servidor. Por favor intenta más tarde." },
+      { error: "Ocurrió un error en el servidor al guardar el registro." },
       { status: 500 }
     );
   }
