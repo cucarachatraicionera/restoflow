@@ -15,14 +15,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Save to database
-    saveRegistration({
-      restaurantName,
-      ownerName,
-      phone,
-      email,
-      menu,
-    });
+    // Save to database (will fail on Vercel due to read-only filesystem, but works locally)
+    try {
+      saveRegistration({
+        restaurantName,
+        ownerName,
+        phone,
+        email,
+        menu,
+      });
+    } catch (dbErr: any) {
+      console.warn("No se pudo guardar localmente en SQLite (Vercel Serverless). Saltando esto para proceder con WhatsApp:", dbErr?.message);
+    }
 
     return NextResponse.json(
       { success: true, message: "Registro completado con éxito" },
